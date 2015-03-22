@@ -1,0 +1,96 @@
+/* Page dimensions */
+body { position: relative; padding-top: 70px; }
+@media (max-width: 979px) { body { padding-top: 0px; } }
+#diagrams > div { height: 350px; margin: 0; }
+#ambrose-view-progress-bar {}
+#ambrose-view-chord {}
+#ambrose-view-graph {}
+
+/* Bootstrap dropdown menu extensions */
+.dropdown-menu a.active { background-color: #eee; }
+
+/* Typography */
+h2 { margin: 1em 0px; }
+
+/* Workflows table */
+.ambrose-dashboard .progress,
+.ambrose-dashboard .bar { margin: 0px; }
+
+/* Progress Bar view */
+.ambrose-view-progress-bar { position: relative; margin: 20px 0px; }
+.ambrose-view-progress-bar .number { position: absolute; top: -26px; right: 10px; font-size: 50px; opacity: 0.2; }
+.ambrose-view-progress-bar .progress {}
+
+/* Table view */
+.ambrose-view-table td.job-time,
+.ambrose-view-table td.job-mappers,
+.ambrose-view-table td.job-reducers { white-space: nowrap; }
+.ambrose-view-table tr.selected { background-color: #f7f7f7; }
+.ambrose-view-table tr.hover { background-color: #f7f7f7; }
+
+/* Chord view */
+.ambrose-view-chord {}
+
+/* Graph view */
+.ambrose-view-graph .trigger { cursor: pointer; }
+.ambrose-view-graph path { fill: none; }
+.ambrose-view-graph path.edge { stroke: #aaa; }
+.ambrose-view-graph path.progress {}
+.ambrose-view-graph path.map { fill: #0e90d2; }
+.ambrose-view-graph path.reduce { fill: #ff7800; }
+.ambrose-view-graph circle.metric { fill: rgba(28, 231, 231, 0.25); pointer-events: none; }
+.ambrose-view-graph circle.tic { fill: none; stroke: rgba(28, 231, 231, 0.25); stroke-width: 1px; pointer-events: none; }
+
+/* Graph view popovers */
+.ambrose-view-graph-popover-title .close { position: relative; top: -6px; margin-left: 20px; }
+.ambrose-view-graph-popover-body {}
+.ambrose-view-graph-popover-body dl { margin: 0; }
+.ambrose-view-graph-popover-body dt { float: left; margin-right: 0.5em; }
+.ambrose-view-graph-popover-body dd {}
+
+/* Dashboard */
+.dashboard-status { margin: 1em 0; }
+
+/* Script view */
+.ambrose-view-script {
+  height: 300px;
+  width: 500px;
+  position:fixed !important;
+  padding-left: 10px;
+  padding-top: 5px;
+  left:400px;
+  top:100px;
+  font-family: monospace;
+}
+
+.ambrose-view-script .scriptContent { height:100%; width:100%; }
+.ambrose-view-script .scriptDivTitle { font-weight:bold; padding-right: 70px; cursor: move; }
+.ambrose-view-script .scriptDivTitle .scriptName {
+  width: 100%;
+  overflow:hidden;
+  display: block;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.ambrose-view-script .scriptDivTitle .scriptTitleCloseBtn { margin-right: -60px; margin-top: -22px; }
+.ambrose-view-script .scriptDivTitle .scriptTitleRefreshBtn { margin-right: -40px; margin-top: -22px; }
+.ambrose-view-script .scriptDivBody { width:100%;  height:calc(100% - 40px); overflow: auto; }
+.ambrose-view-script .lineNumber {
+  display: inline-block;
+  font-weight: bold;
+  text-align: left;
+  background-color: #F5F5F5;
+  width: 30px;
+}
+
+.ambrose-view-script .scriptDivBody .scriptLine.hovered { background-color: #FFFF80; }
+.ambrose-view-script .scriptDivBody .scriptLine.hovered.selected { background-color: #FFFF80; }
+.ambrose-view-script .scriptDivBody .scriptLine.selected { background-color: #FFD880; }
+.ambrose-view-script .scriptDivBody .lineNumber.selected { background-color: #AAAAAA; }
+.ambrose-view-script .scriptDivBody .aliasM, .aliasC, .aliasR { vertical-align: super; top: -0.5em; font-size: 80%; font-weight:bold; }
+.ambrose-view-script .scriptDivBody .aliasR { padding-right:5px; }
+
+/* Utility classes */
+.hidden { opacity: 0; }
+.greyText { color: #cccccc !important; }

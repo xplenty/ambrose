@@ -3,52 +3,50 @@
 Twitter Ambrose is a platform for visualization and real-time monitoring of MapReduce data workflows.
 It presents a global view of all the map-reduce jobs derived from your workflow after planning and
 optimization. As jobs are submitted for execution on your Hadoop cluster, Ambrose updates its
-visualization to reflect the latest job status, polled from your process.
+visualization to reflect the latest job status.
 
 Ambrose provides the following in a web UI:
 
-* A chord diagram to visualize job dependencies and current state
-* A table view of all the associated jobs, along with their current state
-* A highlight view of the currently running jobs
-* An overall script progress bar
+* A workflow progress bar depicting percent completion of the entire workflow
+* A table view of all workflow jobs, along with their current state
+* A graph diagram which depicts job dependencies and metrics
+    * Visual weighting of jobs based on resource consumption
+    * Visual weighting of job dependencies based on data volume
+* Script view with line highlighting (Pig only)
 
 Ambrose is built using the following front-end technologies:
 
-* [D3.js](http://d3js.org) - For chord diagram visualization
-* [Bootstrap](http://twitter.github.com/bootstrap/) - For layout and CSS support
+* [jQuery](http://jquery.com), [UnderscoreJS](http://underscorejs.com), [RequireJS](http://requirejs.org) - Core javascript libraries and JS module definition
+* [D3.js](http://d3js.org) - Diagram generation
+* [Bootstrap](http://getbootstrap.com/) - Layout and CSS support
 
-Ambrose is designed to support any Hadoop workflow runtime, but current support is limited to
-[Apache Pig](http://pig.apache.org/).
+Ambrose is designed to support any workflow runtime. See the following section for supported
+runtimes.
 
 Follow [@Ambrose](https://twitter.com/ambrose) on Twitter to stay in touch!
 
 ## Supported runtimes
 
 * [Pig](http://pig.apache.org/) - See [pig/README.md](https://github.com/twitter/ambrose/blob/master/pig/README.md)
-* [Cascading](http://www.cascading.org/) - future work
-* [Scalding](https://github.com/twitter/scalding) - future work
+* [Hive](http://hive.apache.org/) - See [hive/README.md](https://github.com/twitter/ambrose/blob/master/hive/README.md)
+* [Cascading](http://www.cascading.org/) - See [cascading/README.md](https://github.com/twitter/ambrose/blob/master/cascading/README.md)
+* [Scalding](https://github.com/twitter/scalding) - See [scalding/README.md](https://github.com/twitter/ambrose/blob/master/scalding/README.md)
 * [Cascalog](https://github.com/nathanmarz/cascalog) - future work
-* [Hive](http://hive.apache.org/) - future work
 
 ## Examples
 
-Below is a screenshot of the Ambrose UI. Each arc segment on the circle represents a map-reduce job.
-Dependencies between jobs are represented by chords which connect job arc segments.
-Grey jobs have not yet run, bright green jobs are running and light green jobs are completed.
-When the mouse hovers over a job, its arc and input dependencies are highlighted blue. Clicking on
-the job will select it, updating the contents of the table to the right of the diagram with
-information about the selected job.
+Below is a screenshot of the Ambrose workflow UI. The interface presents multiple responsive "views"
+of a single workflow. Just beneath the toolbar at the top of the window is a workflow progress bar
+that tracks overall completion of the workflow. Below the progress bar is a graph diagrams which
+depicts the workflow's jobs and their dependencies. Below the graph diagram is a table of workflow
+jobs.
 
-Note that Each job arc is bisected; Chords on one half of the arc connect to predecessor jobs while
-chords on the other half connect to successor jobs. For example, in the diagram below jobs 1 and 3
-have no predecessors while jobs 16, 20, 21, and 22 have no successors (their outputs represent the
-final result of this workflow).
+All views react to mouseover and click events on a job, regardless of the view on which the event is
+triggered; Moving your mouse over the first row of the table will highlight that job's table row
+along with the job's node in the graph diagram. Clicking on a job in any view will select it,
+updating the highlighting of that job in all views. Clicking again on the same job will deselect it.
 
-Note that the chord diagram shown is our first pass at visualizing the workflow, and there's room
-for improvement. We'd like to support other visualizations as well, like a graph of the workflow DAG.
-If you develop an improved visualization, be sure to send us a pull request!
-
-![Ambrose UI screenshot](https://github.com/twitter/ambrose/raw/master/docs/img/ambrose-ss1.png)
+![Ambrose workflow screenshot](docs/img/ambrose-demo.gif)
 
 ## Quickstart
 
@@ -59,45 +57,38 @@ git clone https://github.com/twitter/ambrose.git
 cd ambrose
 ```
 
-Next, you can try running the Ambrose demo on your local machine. The demo
-starts a local web server which serves the front-end client resources and sample
-data. Start the demo with the following command and then browse to
-[http://localhost:8080/workflow.html?localdata=small](http://localhost:8080/workflow.html?localdata=small):
+Next, you can try running the Ambrose demo on your local machine. The demo starts a local web server
+which serves the front-end client resources and sample data. Start the demo with the following
+command and then browse to
+[http://localhost:8080/workflow.html?localdata=large](http://localhost:8080/workflow.html?localdata=large):
 
 ```
 ./bin/ambrose-demo
 ```
 
-To run Ambrose with an actual Pig script, you'll need to build the Ambrose Pig
-distribution and untar it:
+To run Ambrose with a Pig script, you'll need to build the Ambrose Pig distribution:
 
 ```
 mvn package
-tar zxvf pig/target/ambrose-pig-$VERSION-bin.tar.gz
 ```
 
-You can then run the following commands to execute `path/to/my/script.pig` with an Ambrose app server
-embedded within the Pig client:
+You can then run the following commands to execute `script.pig` with an embedded web server which
+hosts the Ambrose web application:
 
 ```
-cd ambrose-pig-$VERSION
-./bin/pig-ambrose -f path/to/my/script.pig
+cd pig/target/ambrose-pig-$VERSION-bin/ambrose-pig-$VERSION
+AMBROSE_PORT=8080 ./bin/pig-ambrose -f script.pig
 ```
 
-Note that this command delegates to the `pig` script present in your local
-installation of Pig, so make sure `$PIG_HOME/bin` is in your path. Now, browse
-to
-[http://localhost:8080/web/workflow.html](http://localhost:8080/web/workflow.html)
-to see the progress of your script using the Ambrose UI. To override the default
-port, export `AMBROSE_PORT` before invoking `pig-ambrose`:
-
-```
-export AMBROSE_PORT=4567
-```
+Note that the `pig-ambrose` script calls the `pig` script present in your local installation of Pig,
+so make sure `$PIG_HOME/bin` is in your path. Now, browse to
+[http://localhost:8080/web/workflow.html](http://localhost:8080/workflow.html) to see the progress
+of your script with the Ambrose workflow UI.
 
 ## Maven repository
 
-An initial release will be pushed to Maven shortly.
+Ambrose releases can be found in the Maven Central Repository within package
+[com.twitter.ambrose](http://central.maven.org/maven2/com/twitter/ambrose).
 
 ## How to contribute
 
@@ -108,7 +99,7 @@ as well.
 Here are some high-level goals we'd love to see contributions for:
 
 * Improve the front-end client
-* Add other visualization options, like a DAG view
+* Add other visualization options
 * Create a new back-end for a different runtime environment
 * Create a standalone Ambrose server that's not embedded in the workflow client
 
@@ -128,12 +119,14 @@ For more information on semantic versioning, please visit http://semver.org/.
 
 ## Authors
 
-* Bill Graham ([@billgraham](https://twitter.com/billgraham))
-* Andy Schlaikjer ([@sagemintblue](https://twitter.com/sagemintblue))
-* Nicolas Belmonte ([@philogb](https://twitter.com/philogb))
+* [Bill Graham](https://github.com/billonahill) ([@billgraham](https://twitter.com/billgraham))
+* [Andy Schlaikjer](https://github.com/sagemintblue) ([@sagemintblue](https://twitter.com/sagemintblue))
+* [Gary Helmling](https://github.com/ghelmling) ([@gario](https://twitter.com/gario))
+* [Nicolas Belmonte](https://github.com/philogb) ([@philogb](https://twitter.com/philogb))
+* [Grace Zhang](https://github.com/gzhangT) ([@pkq1123](https://twitter.com/pkq1123))
 
 ## License
 
-Copyright 2012 Twitter, Inc.
+Copyright 2013 Twitter, Inc.
 
 Licensed under the Apache License, Version 2.0: http://www.apache.org/licenses/LICENSE-2.0

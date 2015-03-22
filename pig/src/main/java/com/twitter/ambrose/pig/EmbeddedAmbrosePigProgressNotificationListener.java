@@ -15,45 +15,45 @@ limitations under the License.
 */
 package com.twitter.ambrose.pig;
 
-import com.twitter.ambrose.server.ScriptStatusServer;
-import com.twitter.ambrose.service.impl.InMemoryStatsService;
-import org.apache.pig.tools.pigstats.PigStatsUtil;
-
 import java.io.IOException;
 
+import com.twitter.ambrose.model.Job;
+import com.twitter.ambrose.server.ScriptStatusServer;
+import com.twitter.ambrose.service.impl.InMemoryStatsService;
+
 /**
- * Sublclass of AmbrosePigProgressNotificationListener that starts a ScriptStatusServer embedded in
+ * Subclass of AmbrosePigProgressNotificationListener that starts a ScriptStatusServer embedded in
  * the running Pig client VM. Stats are collected using by this class via InMemoryStatsService,
  * which is what serves stats to ScriptStatusServer.
- * <P>
+ * <p/>
  * To use this class with pig, start pig as follows:
  * <pre>
- * $ bin/pig \
- *  -Dpig.notification.listener=com.twitter.ambrose.pig.EmbeddedAmbrosePigProgressNotificationListener \
- *  -f path/to/script.pig
+ * $ pig \
+ * -Dpig.notification.listener=\
+ * com.twitter.ambrose.pig.EmbeddedAmbrosePigProgressNotificationListener \
+ * -f path/to/script.pig
  * </pre>
- * Additional <pre>-D</pre> options can be set as system as system properties. Note that these must
- * be set via <pre>PIG_OPTS</pre>. For example, <pre>export PIG_OPTS=-Dambrose.port.number=8188</pre>.
- * <ul>
- *   <li><pre>ambrose.port.number</pre> (default=8080) port for the ambrose tool to listen on.</li>
- *   <li><pre>ambrose.post.script.sleep.seconds</pre> number of seconds to keep the VM running after
- *   the script is complete. This is useful to keep Ambrose up once the job is done.</li>
- * </ul>
- * </P>
- * @author billg
+ * Additional {@code -D} options can be set as system as system properties. Note that these must be
+ * set via {@code PIG_OPTS}. For example, {@code export PIG_OPTS=-Dambrose.port=8188}.
+ * <pre>
+ *   <ul>
+ *     <li><code>{@value ScriptStatusServer#PORT_PARAM}</code> - Port for the ambrose server to
+ * listen on. Defaults to {@value ScriptStatusServer#PORT_DEFAULT}.</li>
+ *     <li><code>{@value #POST_SCRIPT_SLEEP_SECS_PARAM}</code> - Number of seconds to keep the VM
+ * running after the script is complete.</li>
+ *   </ul>
+ * </pre>
  */
 public class EmbeddedAmbrosePigProgressNotificationListener
-             extends AmbrosePigProgressNotificationListener {
-
-  private InMemoryStatsService service;
-  private ScriptStatusServer server;
+    extends AmbrosePigProgressNotificationListener {
   private static final String POST_SCRIPT_SLEEP_SECS_PARAM = "ambrose.post.script.sleep.seconds";
+  private InMemoryStatsService<Job> service;
+  private ScriptStatusServer server;
 
   public EmbeddedAmbrosePigProgressNotificationListener() {
-    super(new InMemoryStatsService());
-    this.service = (InMemoryStatsService)getStatsWriteService();
-
-    this.server = new ScriptStatusServer(service);
+    super(new InMemoryStatsService<Job>());
+    this.service = (InMemoryStatsService<Job>) getStatsWriteService();
+    this.server = new ScriptStatusServer(service, service);
     this.server.start();
   }
 
@@ -68,21 +68,16 @@ public class EmbeddedAmbrosePigProgressNotificationListener
 
     try {
       int sleepTimeSeconds = Integer.parseInt(sleepTime);
-      // if sleep time is long, display stats so users watching std out can tell things are done.
-      // if sleep time is short though, don't bother, since they'll get displayed by Pig after the
-      // sleep.
-      if (sleepTimeSeconds > 10) {
-        PigStatsUtil.displayStatistics();
-      }
 
       log.info("Job complete but sleeping for " + sleepTimeSeconds
-        + " seconds to keep the PigStats REST server running. Hit ctrl-c to exit.");
-      service.writeJsonToDisk();
+          + " seconds to keep the PigStats REST server running. Hit ctrl-c to exit.");
+      service.flushJsonToDisk();
       Thread.sleep(sleepTimeSeconds * 1000);
       server.stop();
 
     } catch (NumberFormatException e) {
-      log.warn(POST_SCRIPT_SLEEP_SECS_PARAM + " param is not a valid number, not sleeping: " + sleepTime);
+      log.warn(POST_SCRIPT_SLEEP_SECS_PARAM + " param is not a valid number, not sleeping: " +
+          sleepTime);
     } catch (IOException e) {
       log.warn("Couldn't write json to disk", e);
     } catch (InterruptedException e) {
