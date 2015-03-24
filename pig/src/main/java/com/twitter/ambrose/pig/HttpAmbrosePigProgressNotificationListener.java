@@ -41,7 +41,11 @@ import com.twitter.ambrose.service.impl.HttpStatsWriteService;
  */
 public class HttpAmbrosePigProgressNotificationListener extends AmbrosePigProgressNotificationListener {
 
-  public HttpAmbrosePigProgressNotificationListener() {
-    super(new HttpStatsWriteService());
-  }
+	  public HttpAmbrosePigProgressNotificationListener() {
+	    super(new HttpStatsWriteService());
+	  }
+
+	  public HttpAmbrosePigProgressNotificationListener(String url) {
+	    super(new HttpStatsWriteService(url));
+	  }
 }
