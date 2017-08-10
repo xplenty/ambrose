@@ -35,7 +35,7 @@ public class PigJobTest {
     pigJob = new PigJob();
     pigJob.setAliases(aliases);
     pigJob.setFeatures(features);
-    pigJob.setConfiguration(properties);
+    //pigJob.setConfiguration(properties);
     Map<String, Number> m = Maps.newHashMap();
     m.put("somemetric", 45);
     pigJob.setMetrics(m);

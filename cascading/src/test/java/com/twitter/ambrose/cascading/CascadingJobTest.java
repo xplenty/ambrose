@@ -42,7 +42,7 @@ public class CascadingJobTest {
 
     cascadingJob = new CascadingJob();
     cascadingJob.setFeatures(features);
-    cascadingJob.setConfiguration(properties);
+    //cascadingJob.setConfiguration(properties);
     Map<String, Number> m = Maps.newHashMap();
     m.put("somemetric", 45);
     cascadingJob.setMetrics(m);
