@@ -68,7 +68,7 @@ public class MapReduceHelper {
     try {
       job.setMapReduceJobState(getMapReduceJobState(job, jobClient));
     } catch (Exception e) {
-      LOG.warn("Failed to retrieve job state", e);
+      LOG.debug("Failed to retrieve job state", e); //downgraded log to debug to prevent log flooding
     }
   }
 
