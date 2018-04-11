@@ -133,7 +133,7 @@ public class AmbrosePigProgressNotificationListener implements PigProgressNotifi
    */
   @Override
   public void initialPlanNotification(String scriptId, OperatorPlan<?> plan) {
-    log.info("initialPlanNotification - scriptId " + scriptId + " plan " + plan);
+    //log.info("initialPlanNotification - scriptId " + scriptId + " plan " + plan);
 
     // For ambrose to work above 3 must be non-null
     Preconditions.checkNotNull(pigConfig.getJobClient());
